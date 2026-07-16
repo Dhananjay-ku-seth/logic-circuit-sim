@@ -105,6 +105,10 @@ footer { text-align: center; color: var(--dim); font-size: 11.5px; margin-top: 1
 .save-btn { font-family: inherit; font-size: 12px; cursor: pointer; background: var(--panel-2);
   color: var(--txt); border: 1px solid var(--line); padding: 7px 12px; border-radius: 7px; }
 .save-btn:hover { border-color: var(--cyan); color: #fff; }
+.save-btn.on { background: var(--cyan); color: #04222a; border-color: var(--cyan); font-weight: 600; }
+.save-name-form { display: flex; align-items: center; gap: 6px; }
+.save-name-form input { font-family: inherit; font-size: 12px; background: var(--panel-2); color: var(--txt);
+  border: 1px solid var(--cyan); border-radius: 7px; padding: 7px 10px; width: 140px; }
 .save-msg { font-size: 11.5px; color: var(--amber); }
 .load-wrap { position: relative; }
 .load-list { position: absolute; top: 36px; left: 0; z-index: 20; background: var(--panel);

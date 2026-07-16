@@ -13,6 +13,8 @@ export default function SaveLoad({
 }) {
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [naming, setNaming] = useState(false);
+  const [name, setName] = useState("My Circuit");
   const [listOpen, setListOpen] = useState(false);
   const [rows, setRows] = useState<Row[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -22,19 +24,20 @@ export default function SaveLoad({
     return <span className="save-hint">Sign in to save your circuits (Pro feature — free while in beta)</span>;
   }
 
-  async function save() {
-    const name = window.prompt("Name this circuit:", "My Circuit");
-    if (!name) return;
+  async function save(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!name.trim()) return;
     setSaving(true);
     setMsg(null);
     const { error } = await supabase.from("circuits").insert({
       user_id: user!.id,
-      name,
+      name: name.trim(),
       comps_json: comps,
       wires_json: wires,
       note,
     });
     setSaving(false);
+    setNaming(false);
     setMsg(error ? `Save failed: ${error.message}` : "Saved!");
     setTimeout(() => setMsg(null), 3000);
   }
@@ -70,7 +73,21 @@ export default function SaveLoad({
 
   return (
     <div className="saveload">
-      <button className="save-btn" onClick={save} disabled={saving}>{saving ? "Saving…" : "💾 Save Circuit"}</button>
+      {naming ? (
+        <form className="save-name-form" onSubmit={save}>
+          <input
+            autoFocus
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Escape") setNaming(false); }}
+            placeholder="Circuit name"
+          />
+          <button type="submit" className="save-btn on" disabled={saving}>{saving ? "…" : "✓"}</button>
+          <button type="button" className="save-btn" onClick={() => setNaming(false)}>✕</button>
+        </form>
+      ) : (
+        <button className="save-btn" onClick={() => setNaming(true)}>💾 Save Circuit</button>
+      )}
       <div className="load-wrap">
         <button className="save-btn" onClick={openList}>📂 My Circuits {listOpen ? "▲" : "▼"}</button>
         {listOpen && (

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./useAuth";
+import { useProfile } from "./useProfile";
+import UpgradeButton from "./UpgradeButton";
 import type { Comp, Wire } from "./logic";
 
 type Row = { id: string; name: string; created_at: string };
@@ -12,6 +14,7 @@ export default function SaveLoad({
   onLoad: (comps: Comp[], wires: Wire[], note: string) => void;
 }) {
   const { user } = useAuth();
+  const { isPro, loading: proLoading, refetch: refetchProfile } = useProfile();
   const [saving, setSaving] = useState(false);
   const [naming, setNaming] = useState(false);
   const [name, setName] = useState("My Circuit");
@@ -22,7 +25,15 @@ export default function SaveLoad({
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
   if (!user) {
-    return <span className="save-hint">Sign in to save your circuits (Pro feature — free while in beta)</span>;
+    return <span className="save-hint">Sign in to save your circuits (Pro feature)</span>;
+  }
+
+  if (proLoading) {
+    return <span className="save-hint">Checking Pro status…</span>;
+  }
+
+  if (!isPro) {
+    return <UpgradeButton onUpgraded={refetchProfile} />;
   }
 
   async function save(e?: React.FormEvent) {

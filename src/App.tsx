@@ -3,6 +3,8 @@ import {
   Kind, Comp, Wire, GATES, numInputs, hasOutput, dims, outPort, inPort,
   evaluate, preset, truthTable,
 } from "./logic";
+import AuthPanel from "./AuthPanel";
+import SaveLoad from "./SaveLoad";
 
 const SVW = 900, SVH = 380;
 let counter = 1;
@@ -118,8 +120,11 @@ export default function App() {
           <p>Drag gates · click a port to wire · toggle inputs · live truth table — combinational &amp; sequential</p>
         </div>
         <div className="badges">
-          <a className="labbench-badge" href="https://labbench-hub.vercel.app/" target="_blank" rel="noopener noreferrer">⚡ LabBench</a>
-          <a className="src" href="https://dhananjay-kumar-seth.vercel.app/" target="_blank" rel="noopener noreferrer">ECE Portfolio · Dhananjay Seth</a>
+          <AuthPanel />
+          <div className="badge-links">
+            <a className="labbench-badge" href="https://labbench-hub.vercel.app/" target="_blank" rel="noopener noreferrer">⚡ LabBench</a>
+            <a className="src" href="https://dhananjay-kumar-seth.vercel.app/" target="_blank" rel="noopener noreferrer">ECE Portfolio · Dhananjay Seth</a>
+          </div>
         </div>
       </header>
 
@@ -135,6 +140,13 @@ export default function App() {
           <button key={n} className="preset" onClick={() => loadPreset(n)}>{n}</button>
         ))}
         <button className="clear" onClick={clearAll}>Clear</button>
+      </div>
+
+      <div className="palette">
+        <SaveLoad comps={comps} wires={wires} note={note} onLoad={(c, w, n) => {
+          counter += 1000;
+          setComps(c); setWires(w); setNote(n); setSelected(null);
+        }} />
       </div>
 
       <div className="stage">

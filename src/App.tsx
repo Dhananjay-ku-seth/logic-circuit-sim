@@ -117,7 +117,10 @@ export default function App() {
           <h1>LOGIC CIRCUIT SIMULATOR</h1>
           <p>Drag gates · click a port to wire · toggle inputs · live truth table — combinational &amp; sequential</p>
         </div>
-        <span className="src">ECE Portfolio · Dhananjay Seth</span>
+        <div className="badges">
+          <a className="labbench-badge" href="https://labbench-hub.vercel.app/" target="_blank" rel="noopener noreferrer">⚡ LabBench</a>
+          <a className="src" href="https://dhananjay-kumar-seth.vercel.app/" target="_blank" rel="noopener noreferrer">ECE Portfolio · Dhananjay Seth</a>
+        </div>
       </header>
 
       <div className="palette">

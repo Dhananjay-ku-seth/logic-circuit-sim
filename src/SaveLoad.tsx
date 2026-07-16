@@ -19,6 +19,7 @@ export default function SaveLoad({
   const [rows, setRows] = useState<Row[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   if (!user) {
     return <span className="save-hint">Sign in to save your circuits (Pro feature — free while in beta)</span>;
@@ -66,7 +67,13 @@ export default function SaveLoad({
 
   async function remove(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!window.confirm("Delete this saved circuit?")) return;
+    if (confirmId !== id) {
+      // first click arms a confirmation on this specific row; clicking anything
+      // else, or this button again, is what actually deletes it (no native dialog)
+      setConfirmId(id);
+      return;
+    }
+    setConfirmId(null);
     await supabase.from("circuits").delete().eq("id", id);
     setRows((r) => r?.filter((x) => x.id !== id) ?? null);
   }
@@ -97,7 +104,14 @@ export default function SaveLoad({
             {!busy && rows?.map((r) => (
               <div key={r.id} className="load-row" onClick={() => load(r.id)}>
                 <span>{r.name}</span>
-                <button className="load-del" onClick={(e) => remove(r.id, e)} title="Delete">✕</button>
+                <button
+                  className={"load-del" + (confirmId === r.id ? " confirm" : "")}
+                  onClick={(e) => remove(r.id, e)}
+                  onMouseLeave={() => confirmId === r.id && setConfirmId(null)}
+                  title={confirmId === r.id ? "Click again to confirm" : "Delete"}
+                >
+                  {confirmId === r.id ? "Delete?" : "✕"}
+                </button>
               </div>
             ))}
           </div>

@@ -18,7 +18,7 @@ Part of the [LabBench](https://labbench-hub.vercel.app/) suite of interactive en
 ## LabBench Pro
 Sign in (Supabase auth) to save and reload circuits — gated behind an optional ₹29/mo subscription
 (Razorpay Subscriptions). This is the tool that hosts the actual checkout for the whole LabBench suite;
-the other 4 tools link back here to upgrade, since one subscription unlocks Pro features everywhere.
+the other 6 tools link back here to upgrade, since one subscription unlocks Pro features everywhere.
 
 ## Tech
 React + TypeScript + Vite. SVG editor and logic engine written from scratch — no libraries.

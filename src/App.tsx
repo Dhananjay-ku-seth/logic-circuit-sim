@@ -5,15 +5,19 @@ import {
 } from "./logic";
 import AuthPanel from "./AuthPanel";
 import SaveLoad from "./SaveLoad";
+import { readSharedFromUrl, buildShareUrl } from "./share";
 
 const SVW = 900, SVH = 380;
 let counter = 1;
 const nid = (p: string) => `${p}${counter++}_${Math.random().toString(36).slice(2, 6)}`;
 
+const shared = readSharedFromUrl();
+
 export default function App() {
-  const [comps, setComps] = useState<Comp[]>(() => preset("Half Adder").comps);
-  const [wires, setWires] = useState<Wire[]>(() => preset("Half Adder").wires);
-  const [note, setNote] = useState("Sum = A⊕B, Carry = A·B");
+  const [comps, setComps] = useState<Comp[]>(() => shared?.comps ?? preset("Half Adder").comps);
+  const [wires, setWires] = useState<Wire[]>(() => shared?.wires ?? preset("Half Adder").wires);
+  const [note, setNote] = useState(shared?.note ?? "Sum = A⊕B, Carry = A·B");
+  const [shareMsg, setShareMsg] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [pending, setPending] = useState<{ from: string; x: number; y: number } | null>(null);
 
@@ -93,6 +97,17 @@ export default function App() {
   }
   function clearAll() { setComps([]); setWires([]); setNote(""); setSelected(null); }
 
+  async function shareCircuit() {
+    const url = buildShareUrl({ comps, wires, note });
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareMsg("Link copied!");
+    } catch {
+      setShareMsg(url);
+    }
+    setTimeout(() => setShareMsg(null), 4000);
+  }
+
   function startWire(id: string, e: React.PointerEvent) {
     e.stopPropagation();
     wiring.current = id;
@@ -140,6 +155,9 @@ export default function App() {
           <button key={n} className="preset" onClick={() => loadPreset(n)}>{n}</button>
         ))}
         <button className="clear" onClick={clearAll}>Clear</button>
+        <span className="sep" />
+        <button className="share" onClick={shareCircuit}>🔗 Share</button>
+        {shareMsg && <span className="share-msg">{shareMsg}</span>}
       </div>
 
       <div className="palette">
